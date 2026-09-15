@@ -1111,6 +1111,42 @@ checked that way.
 No script, gate, threshold or rule was touched; both docs were verified against their pre-edit manifest hashes
 (`6f08a612…`, `04b2a400…`) before editing, so the corrected sentences are the only change.
 
+**Refresh note (2026-09-15, same turn — unit_dual.py: count × value, axis labels, bag flag per description):** one line
+recomputed after a second CODE FIX (user decision "TAMAM DÜZELT" on the two pre-existing quirks named in the note below,
+plus one gap found while testing). `./unit_dual.py`: (1) `Pack of 2 x 500 ml` — a run of two numbers joined by x with a
+MASS / VOLUME unit is a count times a value, never a two-axis dimension (only length units form dimension runs):
+`split_count()` keeps the `2 x ` prefix verbatim and converts the value → `2 x 16.9 fl oz (2 x 500 ml)`; a range
+(`5-7 oz`) and a length run (`28.8 x 27.8 cm`) convert as before. (2) an axis LABEL right after the unit (`9.45 in L x 7
+in W`, `12 cm H`) is now part of the match (`LABEL` group in MEAS) so the conversion lands after it — `9.45 in L (24 cm)`,
+not `9.45 in (24 cm) L`; DROP_PAREN keeps the label; `10 in L-shaped` is not a label. (3) `BAG_PRODUCT`: process() decides
+once per description, from the H2 + benefit bullets, whether the product is a bag; on a bag page every LITRE figure stays
+as written — this covers a spec row like `Volume: 3.5 liters` that names no bag word itself, which the BAG-context test
+alone had missed in the fixture. ml figures on a bag page are still liquids (`2 x 500 ml bottle pair` → fl oz). Known and
+accepted: a `1 L` bottle mentioned on a bag page stays in litres. Fixture-tested: 25 dual / imperial_only cases (the
+batch32 four, the two quirks, `Set of 3 x 150 g`, `12 cm H`, and every earlier exemption) 0 FAIL, every result idempotent
+and `imperial_only(dual(x)) == imperial_only(x)`; process() on a bag fixture and a water-bottle fixture gives the
+expected output and is idempotent; the flag is reset after process() (a bare `dual("Volume: 3.5 liters")` still converts).
+Not run on a live batch yet.
+
+**Refresh note (blr-batch32, 2026-09-15 — unit_dual.py: word units and bag litres):** two lines recomputed after a CODE FIX
+(user decision "TAMAM YAP", from the blr-batch32 run log's two open items). `./unit_dual.py`: (1) a unit written as a WORD
+was never matched — `800 meters` stayed metric-only on p27 while `800m` on the same product was converted, likewise
+`5000 meters` (p06) and `800-5500 meters` (p16); UNIT_RE now lists `meter(s)/metre(s)` and `liter(s)/litre(s)` FIRST and
+`WORD_UNIT` maps them to the short key, MET_RUN and has_both() carry the same word forms so imperial_only drops the
+parenthesis and SWAP reorders them. (2) a bag's litres were read as a liquid — `50L backpack` reached the final as `1690.7
+fl oz backpack` (p08 FAQ), `3.5L main compartment` as `118.3 fl oz` (p07), 8 places hand-fixed before the push; new `BAG`
+regex (backpack / rucksack / daypack / bag / compartment / luggage / suitcase / duffel / tote / pannier / pouch / sack)
+applied in `_skip()` exactly like ENGINE — item name, 40 chars before, 25 after. "capacity" and "pack" alone are
+deliberately NOT bag words (a bottle's `capacity: 1 L` and a `pack of 2 x 500 ml` are liquids).
+`./rules/description-format-rule.md` §5 gained the two-sentence rule. Fixture-tested (20 cases): the four batch32 cases
+now `2624.7 ft (800 meters)`, `16404.2 ft (5000 meters)`, `2624.7-18044.6 ft (800-5500 meters)`, `50L backpack` /
+`3.5L main compartment` unchanged; `1 L water bottle`, `Tank: 250ml`, engine litres, 4G, `in L` label, 3000mm rating,
+145 g, cm triple, °F range and `15.2cm/5.98in` all behave as before; every result idempotent in dual() and
+imperial_only(). Two PRE-EXISTING quirks were seen on the pristine copy and are NOT fixed here (out of scope, no rule
+decision): `Pack of 2 x 500 ml` is read as a dimension run (`0.1 x 16.9 fl oz`), and `9.45 in L x 7 in W` gets `(24 cm)`
+inserted before the L label in dual(). The toolkit now lives in the GitHub repo (toolkit/00-SESSION-START.md); both
+files and MANIFEST.sha256 were sent to the user for upload in the same turn.
+
 **Refresh note (blr-batch28, 2026-09-14):** three lines were STALE on this session's copy, not corrupted copies — `./TITLE-SPEC.md`, `./title-check.py` and `./rules/title-format-rule.md`. For each, two independent copy agents produced byte-identical files that both disagreed with the manifest, so per §6 the manifest lines were stale: the three project docs were edited after the previous refresh. All three were recomputed from the verified copies that passed the run. One GENUINE copy corruption was also caught and fixed by re-copy in the same session: `./dim_keep.py` (first copy `dd0f6ac89cf620f7185702d55a249abd76b450364acecbb5754b000bd447291a`, second independent copy matched this manifest's `2e8bd086…` exactly), so that line is unchanged. After the fix the block passed 56 of 56.
 
 ```
@@ -1134,7 +1170,7 @@ b172ebe12906d7f84182c11605cec312000d2847718cf93c40cc58a7e622fdba  ./head_check.p
 e707095eb797499bba92ca2c7dfe4874f772ea6217bf9cb82b1c2af10cf5a23b  ./ov.py
 5649a99fbc751d22abcebfe3c920021bf9a7cf6e6f943491ecee59869402c6d3  ./rules/cta-benefits-metafield.md
 1da499cd8e7023e4e8e9682a3182206a2fd360ad64bb5203d9054d9f3b5c4c09  ./rules/dataforseo-credentials.md
-fcf044c1e2ab500f8cc99dbc5ec3774390f0dd1e006845afe45fb65b14143766  ./rules/description-format-rule.md
+32deb43117fd7c95dfec66239e2138091b4ee0764957a263c1c90ded0e77dbea  ./rules/description-format-rule.md
 1009ea65ea1015faa372ae468977c555b4c986c18e1573c291e295de177bfc4f  ./rules/image-alt-text-rule.md
 89e1ce959490cd02fc753583ff46f997882cd48dfa7caaf1ee2de8d47c4deb30  ./rules/PROJECT-DESCRIPTION.md
 20f2560a880ecc6a627411a27ab77df075ea6f444ae6890fa1e6b76f459e08e2  ./rules/rule-overlap-deferred.md
@@ -1159,7 +1195,7 @@ c5cf7018f2be9b007a57e3cc41e4d4aeec35374717b28c0dc7738d8a298e32fb  ./rehost.py
 1b7441a5fb9b44069b651629173a6b4735d75e158771562c98ae4dd79ebd6d85  ./rules/fit-block-rule.md
 1d5a90d740c28cd881d617ce9b89a0a5b3efbc6d7e9525389c50ef433ddc5b7d  ./CTA-REVIEW-SPEC.md
 e15cebe0fde55247966cb6eab106660a3c0c44a0eb6db2f40151b6e9bde079d8  ./keyfeat_cover.py
-ceb2f03ac3e9ccd12ebed04e25071f75d71800029b49b592755a9ac833d017d5  ./unit_dual.py
+fd3b93350832d3aa137ecc957f13f430a97592210884ce524d0a0d63028d6095  ./unit_dual.py
 e08c21d0b6fe0951e3c929318b2e2d7a757a4ed724d48bcc6369fb1fd047baff  ./para_feat.py
 87b17ae7b1e631dee6996441a52bfa46a66cc7961fe9f7a35777ebd18f1af356  ./extract_check.py
 e4c4050841aeea9b3b8180386f3bdc2eef070b8936c6a240d766bcd58bd08875  ./KF-REVIEW-SPEC.md

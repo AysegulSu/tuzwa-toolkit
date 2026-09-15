@@ -22,12 +22,21 @@ METRIC = {"mm": ("in", 0.0393701), "cm": ("in", 0.393701), "m": ("ft", 3.28084),
           "ml": ("fl oz", 0.033814), "l": ("fl oz", 33.814)}
 IMPERIAL = {"in": ("cm", 2.54), "inch": ("cm", 2.54), "inches": ("cm", 2.54), '"': ("cm", 2.54), "ft": ("m", 0.3048), "feet": ("m", 0.3048),
             "oz": ("g", 28.3495), "lb": ("kg", 0.453592), "lbs": ("kg", 0.453592), "fl oz": ("ml", 29.5735)}
-UNIT_RE = r'(mm|cm|m|kg|g|ml|l|fl\.? ?oz|oz|lbs|lb|inch(?:es)?|in|ft|feet|")'
+# 2026-09-15 (blr-batch32 p06/p16/p27): a unit written as a WORD — "800 meters", "3.5 liters" — was never matched (the
+# short form "m" is followed by "eters", so the (?![\w/]) lookahead rejected it) and the figure reached the page metric-only
+# while "800m" on the same product was converted. Word forms are listed FIRST in UNIT_RE so the alternation cannot stop at
+# the short form; WORD_UNIT maps them to the METRIC key. Only metre / litre families are added (the two the batch showed).
+WORD_UNIT = {"meter": "m", "meters": "m", "metre": "m", "metres": "m", "liter": "l", "liters": "l", "litre": "l", "litres": "l"}
+WORD_RE = r'met(?:er|re)s?|lit(?:er|re)s?'
+UNIT_RE = r'(' + WORD_RE + r'|mm|cm|m|kg|g|ml|l|fl\.? ?oz|oz|lbs|lb|inch(?:es)?|in|ft|feet|")'
 NUM = r'(?:(?<!\d)-)?\d+(?:[.,]\d+)?'
 # a run of numbers joined by x / × / * / - / to, then one unit: "28.8 * 27.8 * 0.3 cm", "5-7 in", "145 g"
 # 2026-09-07 (STR-DUB-2-batch3): an inner unit is only a unit when a separator (x / - / to) follows it — without the lookahead
 # "49mm" backtracked into run "49m" + unit "m" (-> 160.8 ft) and "250ml" into "250m" + "l".
-MEAS = re.compile(r'(?<![\w.-])(' + NUM + r'(?:\s*' + UNIT_RE + r'(?=\s*(?:x|×|\*|-|–|to)\b|\s*(?:x|×|\*|-|–)))?(?:\s*(?:x|×|\*|-|–|to)\s*' + NUM + r'(?:\s*' + UNIT_RE + r'(?=\s*(?:x|×|\*|-|–|to)\b|\s*(?:x|×|\*|-|–)))?)*)\s*(?P<unit>' + UNIT_RE + r')(?![\w/])', re.I)
+# 2026-09-15 (user decision): an axis LABEL right after the unit — "9.45 in L x 7 in W", "12 cm H" — is part of the measurement,
+# so the conversion lands after the label ("9.45 in L (24 cm)"), not between unit and label ("9.45 in (24 cm) L").
+LABEL = r'(?P<label>\s[LWHD](?![\w-]))?'
+MEAS = re.compile(r'(?<![\w.-])(' + NUM + r'(?:\s*' + UNIT_RE + r'(?=\s*(?:x|×|\*|-|–|to)\b|\s*(?:x|×|\*|-|–)))?(?:\s*(?:x|×|\*|-|–|to)\s*' + NUM + r'(?:\s*' + UNIT_RE + r'(?=\s*(?:x|×|\*|-|–|to)\b|\s*(?:x|×|\*|-|–)))?)*)\s*(?P<unit>' + UNIT_RE + r')(?![\w/])' + LABEL, re.I)
 TEMP = re.compile(r'(?<![\w.-])(' + NUM + r'(?:\s*(?:-|–|to|/|,)\s*' + NUM + r'(?:\s*°\s*[CF]\b)?)*)\s*°\s*([CF])\b')
 INT_UNITS = {"°F", "°C", "g", "ml"}
 
@@ -46,13 +55,27 @@ def fmt(v, unit):
     s = f"{v:.0f}" if unit in INT_UNITS else f"{v:.1f}".rstrip("0").rstrip(".")
     return s
 
-def convert_run(numrun, factor, unit):
+LENGTH_UNITS = {"mm", "cm", "m", "in", "inch", "inches", '"', "ft", "feet"}
+COUNT_X = re.compile(r'^(\d+)(\s*(?:x|×|\*)\s*)(.+)$', re.I)
+
+def split_count(numrun, unit):
+    """2026-09-15 (user decision): "2 x 500 ml" with a MASS / VOLUME unit is a count times a value ("pack of 2 x 500 ml
+    bottles"), never a two-axis dimension — only length units form dimension runs. Returns (count_prefix, value_run): the
+    prefix ("2 x ") is kept verbatim, only the value is converted -> "2 x 16.9 fl oz". A range ("5-7 oz") or a length run
+    ("28.8 x 27.8 cm") returns ("", numrun) and converts as before."""
+    if unit in LENGTH_UNITS: return "", numrun
+    m = COUNT_X.match(numrun.strip())
+    if not m: return "", numrun
+    return m.group(1) + m.group(2), m.group(3)
+
+def convert_run(numrun, factor, unit, src_unit=None):
+    prefix, numrun = split_count(numrun, src_unit) if src_unit else ("", numrun)
     numrun = re.sub(r'\s*' + UNIT_RE + r'(?=\s*(?:x|×|\*|-|–|to)\b|\s*$)', '', numrun, flags=re.I)   # drop repeated inner units
-    return re.sub(NUM, lambda m: fmt(_num(m.group(0)) * factor, unit), numrun)
+    return prefix + re.sub(NUM, lambda m: fmt(_num(m.group(0)) * factor, unit), numrun)
 
 def has_both(text):
     t = text.lower()
-    metric = re.search(r'\d\s*(?:mm|cm|m|kg|g|ml|l)\b', t); imp = re.search(r'\d\s*(?:in|inch|inches|ft|feet|oz|lb|lbs|")', t)
+    metric = re.search(r'\d\s*(?:' + WORD_RE + r'|mm|cm|m|kg|g|ml|l)\b', t); imp = re.search(r'\d\s*(?:in|inch|inches|ft|feet|oz|lb|lbs|")', t)
     if '°' in t and re.search(r'°\s*c', t) and re.search(r'°\s*f', t): return True
     return bool(metric and imp)
 
@@ -63,6 +86,12 @@ LIQUID = re.compile(r'\b(capacity|tank|volume|spray|water|liquid|reservoir|mist|
 RATING = re.compile(r'\b(waterproof(?:ness)?|water[- ]?(?:resist(?:ant|ance)|column|proof)|hydrostatic|hh\b|rating|pressure)\b', re.I)
 
 ENGINE = re.compile(r'\b(engines?|displacement|cylinders?|diesel|gasoline|petrol|motor)\b', re.I)
+# 2026-09-15 (blr-batch32 p07/p08, user decision): a bag's litre figure is its VOLUME — "50L backpack", "3.5L main compartment" —
+# written in litres in the US too; it reached the final as "1690.7 fl oz backpack" in 8 places. Same shape as ENGINE: an l/ml
+# figure whose item name, the 40 characters before it or the 25 after it name a bag is left as written. The words are bag words
+# only — "capacity" / "pack" alone are NOT in the list (a water bottle's "capacity: 1 L" and a "pack of 2 x 500 ml" are liquids).
+BAG_PRODUCT = False   # True while process() runs on a description whose H2 / benefit bullets name a bag (2026-09-15)
+BAG = re.compile(r'\b(backpacks?|rucksacks?|daypacks?|bags?|compartments?|luggage|suitcases?|duffels?|totes?|panniers?|pouch(?:es)?|sacks?)\b', re.I)
 # 2026-09-12 (DDL2-Batch3 p17): a temperature RANGE the source already wrote in both scales — "-20°F to 70°F / -29°C to 21°C" —
 # was converted piecewise into "-20°F (-29°C) to 70°F / -29°C to 70°F (21°C)". A text that already carries both °C and °F is
 # never temperature-converted again (dual); imperial_only drops the "/ …°C" half of such a range instead (DROP_SLASH_T).
@@ -74,7 +103,8 @@ def adjacent_dual(text, start, end):
     after = text[end:end + 6]; before = text[max(0, start - 3):start]
     return bool(re.match(r'\s*(?:\(|/)\s*-?\d', after) or re.search(r'(?:\(|/)\s*$', before))
 
-MET_RUN = r'-?[\d.,]+(?:\s*(?:mm|cm|m|kg|g|ml|l))?(?:\s*(?:x|×|\*|-|–|to|/)\s*-?[\d.,]+(?:\s*(?:mm|cm|m|kg|g|ml|l))?)*\s*(?:mm|cm|m|kg|g|ml|l)'
+MET_U = r'(?:' + WORD_RE + r'|mm|cm|m|kg|g|ml|l)'   # 2026-09-15: word forms included so "(800 meters)" is a metric run too
+MET_RUN = r'-?[\d.,]+(?:\s*' + MET_U + r')?(?:\s*(?:x|×|\*|-|–|to|/)\s*-?[\d.,]+(?:\s*' + MET_U + r')?)*\s*' + MET_U
 IMP_RUN = r'-?[\d.,]+(?:\s*(?:in|inch(?:es)?|"|ft|feet|oz|lbs?|fl oz))?(?:\s*(?:x|×|\*|-|–|to|/)\s*-?[\d.,]+(?:\s*(?:in|inch(?:es)?|"|ft|feet|oz|lbs?|fl oz))?)*\s*(?:in|inch(?:es)?|"|ft|feet|oz|lbs?|fl oz)'
 SWAP = re.compile(r'(?<![\w.-])(' + MET_RUN + r')\s*\((' + IMP_RUN + r')\)', re.I)
 SWAP_T = re.compile(r'(?<![\w.-])(-?[\d.,]+(?:\s*(?:-|–|to|/|,)\s*-?[\d.,]+(?:\s*°\s*C)?)*\s*°\s*C)\s*\((-?[\d.,]+(?:\s*(?:-|–|to|/|,)\s*-?[\d.,]+(?:\s*°\s*F)?)*\s*°\s*F)\)')
@@ -91,9 +121,14 @@ def _skip(item, m, liquid=False):
     if m.group("unit") == "G": return True, None   # 2026-09-07 (STR-DUB-2-batch3): "4G" / "5G" is a network generation, not grams — grams are written lowercase
     if m.group("unit") == "L" and re.search(r'[a-zA-Z"]', m.group(1)): return True, None   # 2026-09-07: "9.45 in L" / "23.99 cm L" — L is the length label after a unit, not litres
     unit = m.group("unit").lower().replace(".", "").replace(" ", "")
+    unit = WORD_UNIT.get(unit, unit)   # 2026-09-15: "meters" -> "m", "liters" -> "l"
     # 2026-09-12 (DDL2-Batch3 p17): "12V gasoline engines up to 10.0 L" is engine DISPLACEMENT, written in litres in the US too —
     # it reached the final as "338.1 fl oz (10.0 L)". An l/ml figure whose 40 characters before or 25 after name an engine is left as written.
     if unit in ("l", "ml") and (ENGINE.search(item[max(0, m.start() - 40):m.start()]) or ENGINE.search(item[m.end():m.end() + 25])): return True, None
+    # 2026-09-15 (blr-batch32 p07/p08): a bag's litres are its volume, never a liquid — see BAG above. BAG_PRODUCT (set by
+    # process() from the H2 + benefit bullets) covers a spec row like "Volume: 3.5 liters" that names no bag word itself.
+    if unit == "l" and BAG_PRODUCT: return True, None   # litres only — an ml figure on a bag page is still a liquid (bottle, flask)
+    if unit in ("l", "ml") and (BAG.search(item.split(":")[0] if ":" in item else "") or BAG.search(item[max(0, m.start() - 40):m.start()]) or BAG.search(item[m.end():m.end() + 25])): return True, None
     if unit in ("mm", "m") and (RATING.search(item.split(":")[0] if ":" in item else "") or RATING.search(item[max(0, m.start() - 30):m.start()]) or RATING.search(item[m.end():m.end() + 20])): return True, None
     if unit == "floz": unit = "fl oz"
     if unit == "oz" and liquid: unit = "fl oz"      # a tank / capacity in oz is fluid ounces -> ml
@@ -109,9 +144,10 @@ def dual(item):
         if unit in METRIC: tu, f = METRIC[unit]
         elif unit in IMPERIAL: tu, f = IMPERIAL[unit]
         else: return m.group(0)
-        conv = f"{convert_run(run, f, tu)} {tu}"
+        conv = f"{convert_run(run, f, tu, unit)} {tu}"
+        label = m.group("label") or ""; base = m.group(0)[:len(m.group(0)) - len(label)]
         # US store (user decision 2026-09-06): imperial first, metric in parentheses — whichever the source wrote
-        return f"{conv} ({m.group(0)})" if unit in METRIC else f"{m.group(0)} ({conv})"
+        return f"{conv}{label} ({base})" if unit in METRIC else f"{base}{label} ({conv})"
     new = MEAS.sub(rep, item)
     def rept(m):
         if adjacent_dual(new, m.start(), m.end()): return m.group(0)
@@ -129,7 +165,7 @@ def _temp(m, scale):
     return f"{conv} ({m.group(0)})" if scale == "C" else f"{m.group(0)} ({conv})"
 
 # ---- imperial only (2026-09-11, user decision) -------------------------------------------------------------------------
-DROP_PAREN = re.compile(r'(' + IMP_RUN + r')\s*\((?:' + MET_RUN + r')\)', re.I)
+DROP_PAREN = re.compile(r'(' + IMP_RUN + r'(?:\s[LWHD](?![\w-]))?)\s*\((?:' + MET_RUN + r')\)', re.I)   # label kept (2026-09-15)
 DROP_PAREN_T = re.compile(r'(-?[\d.,]+(?:\s*(?:-|–|to|/|,)\s*-?[\d.,]+(?:\s*°\s*F)?)*\s*°\s*F)\s*\((?:-?[\d.,]+(?:\s*(?:-|–|to|/|,)\s*-?[\d.,]+(?:\s*°\s*C)?)*\s*°\s*C)\)')
 DROP_SLASH_T = re.compile(r'((?:-?[\d.,]+(?:\s*°\s*F)?\s*(?:-|–|to|,)\s*)*-?[\d.,]+\s*°\s*F)\s*/\s*(?:(?:-?[\d.,]+(?:\s*°\s*C)?\s*(?:-|–|to|,)\s*)*-?[\d.,]+\s*°\s*C)(?![\w])')
 DROP_SLASH = re.compile(r'(' + IMP_RUN + r')\s*/\s*(?:' + MET_RUN + r')(?![\w])', re.I)
@@ -150,7 +186,7 @@ def imperial_only(text):
         skip, unit = _skip(t, m, liquid)
         if skip or unit not in METRIC: return m.group(0)
         tu, f = METRIC[unit]
-        return f"{convert_run(m.group(1), f, tu)} {tu}"
+        return f"{convert_run(m.group(1), f, tu, unit)} {tu}{m.group('label') or ''}"
     t = MEAS.sub(rep, t)
     def rept(m):
         if m.group(2).upper() != "C": return m.group(0)
@@ -186,11 +222,16 @@ def process(h):
     first 500 chars, so the metric figure is dropped here and lives on in the Specifications list). Comparison / fit blocks are
     converted by their own build scripts; img alts and SEO fields are never touched.
     Returns (html, dual_count, imperial_only_count)."""
+    global BAG_PRODUCT
     n = 0; k2 = 0
     blocks = []
     def hold(m): blocks.append(m.group(0)); return f"\x00BLOCK{len(blocks)-1}\x00"
     h = BLOCK.sub(hold, h)
     first_ul_end = h.find('</ul>'); kf = h.find('<h3>Key Features</h3>'); spec = h.find('<h3>Specifications</h3>')
+    # 2026-09-15: a bag product keeps every litre figure as written (its volume) — decided once per description from the
+    # H2 + benefit bullets, so a spec row "Volume: 3.5 liters" is covered too. A hydration bladder on a bag page also stays
+    # in litres (the US sells those in litres as well).
+    BAG_PRODUCT = bool(BAG.search(re.sub(r'<[^>]+>', ' ', h[:first_ul_end if first_ul_end >= 0 else 400])))
     pkg = h.find('<h3>Package Includes'); faq = h.find('<h3>FAQs</h3>')
     out = h
     def conv_range(a, b, fn=None):
@@ -222,6 +263,7 @@ def process(h):
     # H2 + benefit bullets (everything before the first </ul>): imperial only (2026-09-11)
     if first_ul_end >= 0: conv_range(0, first_ul_end, imperial_only)
     out = re.sub(r'\x00BLOCK(\d+)\x00', lambda m: blocks[int(m.group(1))], out)
+    BAG_PRODUCT = False
     return out, n, k2
 
 if __name__ == "__main__":

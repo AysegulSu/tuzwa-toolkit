@@ -164,7 +164,10 @@ Saved 2026-08-29 from the user's brief text, plus refinements agreed the same da
    converted. Engine displacement (`engines up to 10.0 L`, `2.0 L diesel`) stays in litres — the US writes it that way
    too — and a temperature range the source already gives in both scales (`-20°F to 70°F / -29°C to 21°C`) is left as
    written in the dual pass and reduced to its °F half in the budgeted elements (2026-09-12, DDL2-Batch3 p17: the script
-   had produced `338.1 fl oz (10.0 L)` and `-29°C to 70°F (21°C)`). Budgeted elements — the H2, the five benefit bullets, the comparison and fit blocks, FAQ questions — get
+   had produced `338.1 fl oz (10.0 L)` and `-29°C to 70°F (21°C)`). A bag's litres (`50L backpack`, `3.5L main
+   compartment`) are its volume, never a liquid — left in litres like engine displacement; and a unit written as a word
+   (`800 meters`, `3.5 liters`) converts exactly like its short form (2026-09-15, blr-batch32: `1690.7 fl oz backpack`
+   and `800 meters` left metric-only had reached the finals). Budgeted elements — the H2, the five benefit bullets, the comparison and fit blocks, FAQ questions — get
    IMPERIAL ONLY, never a parenthesis (user decision 2026-09-11, after the ddl2 pregnancy pillow's comparison table
    read `155 x 75 x 60 cm` live: the store sells only in the USA and no metric figure may stand alone anywhere on the
    page, and a "(155 cm)" parenthesis would break a limit or push a title keyword out of the first 500 characters). There
