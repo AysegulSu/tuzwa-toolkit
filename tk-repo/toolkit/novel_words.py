@@ -26,8 +26,8 @@ def stems(ws): return {w[:5] if len(w) > 5 else w for w in ws}
 for n in sys.argv[1:]:
     n = int(n); d = json.load(open(f'final/d{n:02d}.json')); ex = json.load(open(f'extract/p{n:02d}.json'))
     src = ' '.join(ex['facts'] + [f"{s['name']} {s['value']}" for s in ex['specs']] + ex['package'] + ex['how_to_use']
-                   + [f"{q['q']} {q['a']}" for q in ex['faq_source']] + [v['title'] for v in ex['variants']]
-                   + [ex['old_title'], ex['old_seo_title'], ex['old_seo_description'], ex['productType'], ex['identity']])
+                   + [f"{q['q']} {q['a']}" for q in ex['faq_source']] + [v.get('title') or '' for v in ex['variants']]
+                   + [ex.get(k) or '' for k in ('old_title', 'old_seo_title', 'old_seo_description', 'productType', 'identity')])   # 2026-09-21: null SEO fields crashed the join (blr-batch40/44)
     try: kws = ' '.join(json.load(open(f'candidates/c{n:02d}.json'))['candidates'])
     except Exception: kws = ''
     known = stems(words(src)) | stems(words(kws)) | stems(words(d['title'])) | stems(ALLOW)

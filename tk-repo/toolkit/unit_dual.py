@@ -52,8 +52,21 @@ def _num(s):
 
 
 def fmt(v, unit):
-    s = f"{v:.0f}" if unit in INT_UNITS else f"{v:.1f}".rstrip("0").rstrip(".")
-    return s
+    # 2026-09-21 (blr-batch44 p04, user decision): a sub-unit value must never round to 0 — "0.5 to 8mm" was rendered
+    # "0 to 0.3 in" in 7 places. Values under 1 keep 2 decimals, values under 0.1 keep 2 significant digits; an integer
+    # unit (g, ml, °C, °F) that would round a non-zero value to 0 falls back to the same decimal rule.
+    a = abs(v)
+    if unit in INT_UNITS and (a >= 0.5 or v == 0):
+        return f"{v:.0f}"
+    if v == 0 or a >= 1:
+        return f"{v:.1f}".rstrip("0").rstrip(".")
+    if a >= 0.1:
+        return f"{v:.2f}".rstrip("0").rstrip(".")
+    d = 1
+    while round(a, d) == 0 or len(f"{round(a, d):.{d}f}".lstrip("0.")) < 2:
+        d += 1
+        if d > 6: break
+    return f"{v:.{d}f}".rstrip("0").rstrip(".")
 
 LENGTH_UNITS = {"mm", "cm", "m", "in", "inch", "inches", '"', "ft", "feet"}
 COUNT_X = re.compile(r'^(\d+)(\s*(?:x|×|\*)\s*)(.+)$', re.I)
