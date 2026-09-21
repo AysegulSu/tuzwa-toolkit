@@ -16,7 +16,7 @@ Reading the output (main context, before payloads are built):
   b) the same meaning in different words -> leave it; this script matches words, not meaning
   c) a source line genuinely missing -> send ONLY those products back to their description agent, with the
      instruction to weave the fact into the right section IN ITS OWN WORDS. Never paste the source sentence.
-     A health/medical half of such a line stays softened or removed per the Backend doc Safety Notes.
+     A health benefit the source states is woven in too (Safety Notes 2026-09-21); only a disease-treatment claim stays out.
 Nothing is pushed until (c) is empty or the remaining line has a written reason in notes_for_log.
 
 Usage: python3 fact_cover.py            # all products in final/

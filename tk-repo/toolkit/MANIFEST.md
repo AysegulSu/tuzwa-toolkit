@@ -1149,6 +1149,19 @@ files and MANIFEST.sha256 were sent to the user for upload in the same turn.
 
 **Refresh note (blr-batch28, 2026-09-14):** three lines were STALE on this session's copy, not corrupted copies — `./TITLE-SPEC.md`, `./title-check.py` and `./rules/title-format-rule.md`. For each, two independent copy agents produced byte-identical files that both disagreed with the manifest, so per §6 the manifest lines were stale: the three project docs were edited after the previous refresh. All three were recomputed from the verified copies that passed the run. One GENUINE copy corruption was also caught and fixed by re-copy in the same session: `./dim_keep.py` (first copy `dd0f6ac89cf620f7185702d55a249abd76b450364acecbb5754b000bd447291a`, second independent copy matched this manifest's `2e8bd086…` exactly), so that line is unchanged. After the fix the block passed 56 of 56.
 
+**Refresh note (2026-09-21 — health-claim rule rewritten, RULE CHANGE at the user's decision):** seven lines recomputed.
+The Safety Notes medical/health paragraph no longer forbids physiological-outcome wording: a health benefit the SOURCE itself
+states is KEPT, not softened or removed (relieves back and hip pain, reduces acid reflux, improves breathing, deep restful
+sleep, incl. "instantly" / "all night"); none is invented; still forbidden are disease-treatment claims (heals / treats /
+cures / prevents a named condition) and "clinically proven" / "doctor recommended" / "FDA approved" unless source-stated;
+the source's own disclaimer sentence is still kept. The user edited the project description field first; then every doc
+that repeated the old "soften/remove" wording was aligned in the same turn so agents do not follow a stale sentence:
+`./rules/PROJECT-DESCRIPTION.md` (paragraph replaced), `./rules/description-format-rule.md` (2 places),
+`./rules/comparison-table-rule.md` (rule 7), `./rules/cta-benefits-metafield.md`, `./DESC-SPEC.md` (insoles/denture line),
+`./README-toolkit.md` (step 6b) and `./fact_cover.py` (docstring comment only — no code change, py_compile OK). No step,
+script or gate was added. The by-eye "forbidden claim family" sweep recorded in earlier run logs follows the new list from
+now on. All seven files and MANIFEST.sha256 were sent to the user for GitHub upload in the same turn.
+
 **Refresh note (blr-batch44 follow-up, 2026-09-21 — unit_dual.py sub-unit rounding, novel_words.py null fields):** two lines
 recomputed after a CODE FIX (user decision "düzelt bana ver", from the blr-batch44 run log's two open items). `./unit_dual.py`:
 `fmt()` rounded every non-integer conversion to 1 decimal, so a sub-unit value became 0 — p04's "0.5 to 8mm" reached the final
@@ -1165,9 +1178,9 @@ field is now `or ''`. Tested on all 50 blr-batch44 products: 50 lines, no crash.
 the user for GitHub upload in the same turn.
 
 ```
-d57b32c221964596f3efac951b3b162a23556b3b06b766c1c994e7b629ab4d9e  ./DESC-SPEC.md
+80f57a0214941faafc9fda7998ee3d5b3cbaa83e2d137fd7df19eb0a28d867c4  ./DESC-SPEC.md
 06007e07544be11e3be8b5194c17546c240543f24630b0da687d761c9447aeaa  ./EXTRACT-SPEC.md
-e15971d27946dd320d32eb037c91a5a3781603b4a68fce11e98d0551ef01dfb6  ./README-toolkit.md
+2d72e88736cd24c7a165bb94c3b2b0e5ac0e662bd1c0f41ab7fd49eac2c55cec  ./README-toolkit.md
 a6f42ca0217bcbbaf74603ac81ee0e35192285c99bcb1f575dee0d89299fa57d  ./TITLE-SPEC.md
 6983acd8ac97c6b7221df3f2c8c2b7dd5f23e986f04808c0de5cda517b9e7c34  ./build_check.py
 18af4fa1108f5c83e8773ec4d1a27cf8fc2bdfa77ce14e11f979e44055cf15e7  ./cap.py
@@ -1177,17 +1190,17 @@ f68add61a780c188c1811b927cd6e3bc03973a629034276ab089b70c5ffacad4  ./age_check.py
 b0757ad4fb2b1dd0ca20d03c64aeff9dc878467fe2397235c1f385fef76794bc  ./cta_check.py
 96a8718c232e6e2b645c142c0392ea7ee0867269a43ffefb2e3f0744be3c34be  ./desc-check.py
 08205597a172d72ad2d3ec2125dafbbedaeba5bee7ce5acdf1bfa822c6d89906  ./extract_html.py
-739e014db455d5fa6c684bc5bc4ebe3c68ccf54bf441b41ba3942175c9a7a38d  ./fact_cover.py
+f869bd34e0e4fc64dcb9a92945814d41fd26eb59fbfebb31df51ceb258ab9f4b  ./fact_cover.py
 cde1242bc9ef0068eab3e0dc6eb3448da487a390c8ef85c75000c438408f3746  ./factcheck_prompt.md
 c16bb6c3266378460c635193a728086a629e0c9463d8477900f1365fd07f1da0  ./gate.py
 b172ebe12906d7f84182c11605cec312000d2847718cf93c40cc58a7e622fdba  ./head_check.py
 f26bc457b2badc5d47f31c6f53909f1a6be6026d7b6c2485261ceb01dcef84d9  ./novel_words.py
 e707095eb797499bba92ca2c7dfe4874f772ea6217bf9cb82b1c2af10cf5a23b  ./ov.py
-5649a99fbc751d22abcebfe3c920021bf9a7cf6e6f943491ecee59869402c6d3  ./rules/cta-benefits-metafield.md
+fb0cfc0f8e09966954dc3100ff4e9862b6ac5096c477e42cace3857c19ffb9b2  ./rules/cta-benefits-metafield.md
 1da499cd8e7023e4e8e9682a3182206a2fd360ad64bb5203d9054d9f3b5c4c09  ./rules/dataforseo-credentials.md
-32deb43117fd7c95dfec66239e2138091b4ee0764957a263c1c90ded0e77dbea  ./rules/description-format-rule.md
+c9c31e72d1a2a7fe982755c1bb691b067206e2fc73e0c03b944b8c11682ef39a  ./rules/description-format-rule.md
 1009ea65ea1015faa372ae468977c555b4c986c18e1573c291e295de177bfc4f  ./rules/image-alt-text-rule.md
-89e1ce959490cd02fc753583ff46f997882cd48dfa7caaf1ee2de8d47c4deb30  ./rules/PROJECT-DESCRIPTION.md
+77ea823f6befff40870ea417021c5ffd602525ed841c891688799bc6a31268bb  ./rules/PROJECT-DESCRIPTION.md
 20f2560a880ecc6a627411a27ab77df075ea6f444ae6890fa1e6b76f459e08e2  ./rules/rule-overlap-deferred.md
 bf17d6483fd57d9d6ad75349fd221d86b5412d634d18a2e8d9f49ce06eab39f2  ./rules/title-format-rule.md
 57c8dfd0dc944c0f2295e8ef7f10f856fd2fe11ad6c87a2f0e341ed3a5491c71  ./source_windows.py
@@ -1201,7 +1214,7 @@ f29bf7b35e9abf4ee77519cb0d83a3bc41f8c53d8d6be897579c0cc32a50c3e1  ./usage-effici
 713e4becb5cb847ab4447e388614f2ddfdc0d34f7e15d684b02ae6f02d9abfa3  ./verify.py
 c5cf7018f2be9b007a57e3cc41e4d4aeec35374717b28c0dc7738d8a298e32fb  ./rehost.py
 5c4da57651a772232d32a7557a01c001c96302f90d87aa1c795ae9581c40ddda  ./compare_build.py
-3b84a86af9cdae20c3bf28eb8779ea5525de2c828402b713ff597a761b15a688  ./rules/comparison-table-rule.md
+f7a5d4b74973e5ce54e4d44eb95477841b18f31f6c9881d4d03df922ffe199e3  ./rules/comparison-table-rule.md
 2b76b44b688b8c298808b57dbd788ddfa55da4e2101ac6ca059991681bb9dd3e  ./dim_image.py
 18ff02a467edfa90758d943af8851d5878bc4609c7550cb6687a222f44b8bace  ./dim_attach.py
 2e8bd0864f237bfba8ea0fb0c0b804cfe30fc2a24623c9daca3de7b03e512da0  ./dim_keep.py
@@ -1219,7 +1232,7 @@ ca3d7b1753cfc850588e7f746886fb6bc161bf6c65f488553b017dc3d6be70b3  ./kf_review_in
 02b0d2e9de323b1167d42c637d13ff244a3e0833667087cbee2dbb3b1a0d80d9  ./usage_tips.py
 9537576f5d9b334a0f8c36afa5691f2aae93a343bc5dc005c33960c1422df545  ./sections.py
 3338fb4510aa32b831bddfd602f5acb3f1e469d341d55a6757f5ad20605a5399  ./kw_measure.py
-e15971d27946dd320d32eb037c91a5a3781603b4a68fce11e98d0551ef01dfb6  ./README-toolkit.md
+2d72e88736cd24c7a165bb94c3b2b0e5ac0e662bd1c0f41ab7fd49eac2c55cec  ./README-toolkit.md
 ecf9731e745ef965f65733a7c7cf530046dc25bea32681c40c6bc05a87e67ea2  ./rules/kw-order-variant-rule.md
 7c86386a6f77ab101bd60957e78df39449751dce01cf61c7f0eb6da2ffad4d74  ./list_bold.py
 ```

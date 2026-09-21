@@ -20,7 +20,7 @@ için description-format-rule.md §2'deki "Which five benefits" filtresinin ayn�
 CTA'ya giremez. Açıklama bullet'larındaki en güçlü 3 sorun CTA'ya taşınır. Wedge pillow, aynı fact'ler:
 - ❌ `Removable washable cover` / `Stays put, non-slip base` / `Two handy side pockets` (özellik tarifi; cep satın alma nedeni değil)
 - ✓ `Reflux won't wake you` / `Quieter nights, less snoring` / `Never slides down the bed`
-Safety Notes geçerli: sorun cümlesi konfor dilidir, tıbbi iddia değil.
+Safety Notes geçerli (2026-09-21): kaynağın kendi yazdığı sağlık faydası yazılır; kaynakta olmayan uydurulmaz, hastalık tedavi iddiası (heals / treats / cures) yazılmaz.
 **Sıra (eklendi 2026-09-06, kullanıcı kararı):** üç satır önem sırasıyla yazılır — müşterinin EN BÜYÜK derdi (satın alma nedeni)
 ilk satırda, kalan ikisi azalan sırada. Mobilde çoğu ziyaretçi yalnızca ilk satırı okur; ilk satır zayıfsa blok işe yaramaz.
 Test: satırların yerini değiştirince ilk satır güçleniyorsa sıra yanlıştır.

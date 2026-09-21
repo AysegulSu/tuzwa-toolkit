@@ -62,8 +62,8 @@ Saved 2026-08-29 from the user's brief text, plus refinements agreed the same da
    ```
 
    The ✅ set states no fact the ❌ set did not; it spends the five slots on the problems that decide the purchase
-   and writes each one as a concrete scene, not an adjective. Safety Notes still apply: the scene is comfort
-   language, never a medical claim.
+   and writes each one as a concrete scene, not an adjective. Safety Notes still apply: a health benefit
+   the source itself states is kept; none is invented, and no disease-treatment claim (heals / treats / cures) is made.
 
 3. **Short keyword prose** — a brief description that naturally weaves in ALL keywords
    from the product title. ADD ONLY, DELETE NOTHING: every existing product-specific
@@ -368,7 +368,8 @@ brand ban holds everywhere else. Its words are outside the length budget below. 
   "supplier policy, not product fact". gate.py FAILs the family; there is no exemption.
 - Never invent, remove, or alter product specifications.
 - Safety notes still apply (Backend Update Document): baby/kids/pet supervision
-  disclaimers, water-safety warnings, soften/remove medical claims.
+  disclaimers, water-safety warnings; source-stated health benefit claims are KEPT (2026-09-21), none invented,
+  no disease-treatment claims (heals / treats / cures / prevents a named condition).
 - Image handling per the brief's Q14: never delete embedded images; re-host foreign
   ones; count and position unchanged.
 - **A description with no image gets two (user instruction, 2026-09-05).** When the source

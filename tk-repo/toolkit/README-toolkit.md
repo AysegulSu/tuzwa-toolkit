@@ -167,7 +167,7 @@ Drive folder keeps the old store's name; Worfa runs archive under `Worfa/<tag>/`
    it, `omit_per_ruling` already covers it and the script skips those; (b) the same meaning in different words —
    leave it, the script matches words, not meaning; (c) genuinely missing — send ONLY those products back to their
    description agent with the instruction to weave the fact in IN ITS OWN WORDS; a pasted source sentence is sent
-   back again, and a health/medical half stays softened per Safety Notes. Nothing is pushed until (c) is empty or the
+   back again, and a source-stated health benefit is woven in too (Safety Notes 2026-09-21; only disease-treatment claims stay out). Nothing is pushed until (c) is empty or the
    remaining line carries a written reason in that product's `notes_for_log`.
 6c. **Benefit review by eye (main context, before payloads; added 2026-09-06, user decision).** No script can judge
    whether a bullet is a reason to buy, so this step is a written rule, not an option: the main context reads, for EVERY
