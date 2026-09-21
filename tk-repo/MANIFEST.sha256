@@ -1,6 +1,5 @@
 80f57a0214941faafc9fda7998ee3d5b3cbaa83e2d137fd7df19eb0a28d867c4  ./toolkit/DESC-SPEC.md
 06007e07544be11e3be8b5194c17546c240543f24630b0da687d761c9447aeaa  ./toolkit/EXTRACT-SPEC.md
-2d72e88736cd24c7a165bb94c3b2b0e5ac0e662bd1c0f41ab7fd49eac2c55cec  ./toolkit/README-toolkit.md
 a6f42ca0217bcbbaf74603ac81ee0e35192285c99bcb1f575dee0d89299fa57d  ./toolkit/TITLE-SPEC.md
 6983acd8ac97c6b7221df3f2c8c2b7dd5f23e986f04808c0de5cda517b9e7c34  ./toolkit/build_check.py
 18af4fa1108f5c83e8773ec4d1a27cf8fc2bdfa77ce14e11f979e44055cf15e7  ./toolkit/cap.py
@@ -52,3 +51,6 @@ ca3d7b1753cfc850588e7f746886fb6bc161bf6c65f488553b017dc3d6be70b3  ./toolkit/kf_r
 3338fb4510aa32b831bddfd602f5acb3f1e469d341d55a6757f5ad20605a5399  ./toolkit/kw_measure.py
 ecf9731e745ef965f65733a7c7cf530046dc25bea32681c40c6bc05a87e67ea2  ./rules/kw-order-variant-rule.md
 7c86386a6f77ab101bd60957e78df39449751dce01cf61c7f0eb6da2ffad4d74  ./toolkit/list_bold.py
+d6750b9414b575b0c708c9157d95e90332a5e7565b5110574bf3d352a872ffdf  ./toolkit/README-toolkit.md
+b3b64dd58e7faff215653dd17d1d7cd74d1ccd9e4ae76c2580c273a5273fbb51  ./toolkit/fix_sections.py
+3b8daef9a896547894840edc1503d009e2f553fc9eebae2140f14ee1d01003f9  ./toolkit/spec_parse.py
