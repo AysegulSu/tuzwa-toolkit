@@ -1149,6 +1149,21 @@ files and MANIFEST.sha256 were sent to the user for upload in the same turn.
 
 **Refresh note (blr-batch28, 2026-09-14):** three lines were STALE on this session's copy, not corrupted copies — `./TITLE-SPEC.md`, `./title-check.py` and `./rules/title-format-rule.md`. For each, two independent copy agents produced byte-identical files that both disagreed with the manifest, so per §6 the manifest lines were stale: the three project docs were edited after the previous refresh. All three were recomputed from the verified copies that passed the run. One GENUINE copy corruption was also caught and fixed by re-copy in the same session: `./dim_keep.py` (first copy `dd0f6ac89cf620f7185702d55a249abd76b450364acecbb5754b000bd447291a`, second independent copy matched this manifest's `2e8bd086…` exactly), so that line is unchanged. After the fix the block passed 56 of 56.
 
+**Refresh note (blr-batch44 follow-up, 2026-09-21 — unit_dual.py sub-unit rounding, novel_words.py null fields):** two lines
+recomputed after a CODE FIX (user decision "düzelt bana ver", from the blr-batch44 run log's two open items). `./unit_dual.py`:
+`fmt()` rounded every non-integer conversion to 1 decimal, so a sub-unit value became 0 — p04's "0.5 to 8mm" reached the final
+as "0 to 0.3 in" in 7 places (bullet, prose, Key Features, Specifications, FAQ, compare row, fit line) and was hand-fixed. Now
+values ≥ 1 keep 1 decimal (unchanged), values 0.1–1 keep 2 decimals (0.47 in, 0.31 in), values under 0.1 keep 2 significant
+digits (0.02 in, 0.0039 in), and an integer unit (g, ml, °C, °F) that would round a non-zero value to 0 uses the same decimal
+rule. Fixture-tested: `0.5 to 8mm` → `0.02 to 0.31 in` (imperial_only) and `0.02 to 0.31 in (0.5 to 8mm)` (dual); `12mm` →
+`0.47 in`; `22 x 7 x 4.5 cm` → `8.7 x 2.8 x 1.8 in`; `100 g` → `3.5 oz`; `149°F`, `24.5 cm`, `0` unchanged. gate.py re-run over
+the 50 blr-batch44 finals on a copy: CLEAN, `unit-dual: 0 item(s) converted` (idempotent on already-dual text); the only
+content difference is p15's re-rendered compare row / fit line (`12mm` → `0.47 in` instead of `0.5 in`) — live copies are
+not re-pushed. `./novel_words.py`: the source join crashed with TypeError when old_seo_title / old_seo_description /
+productType / identity / a variant title was null (blr-batch40 and blr-batch44 ran it from a patched scratch copy); each
+field is now `or ''`. Tested on all 50 blr-batch44 products: 50 lines, no crash. Both files and MANIFEST.sha256 were sent to
+the user for GitHub upload in the same turn.
+
 ```
 d57b32c221964596f3efac951b3b162a23556b3b06b766c1c994e7b629ab4d9e  ./DESC-SPEC.md
 06007e07544be11e3be8b5194c17546c240543f24630b0da687d761c9447aeaa  ./EXTRACT-SPEC.md
@@ -1166,7 +1181,7 @@ b0757ad4fb2b1dd0ca20d03c64aeff9dc878467fe2397235c1f385fef76794bc  ./cta_check.py
 cde1242bc9ef0068eab3e0dc6eb3448da487a390c8ef85c75000c438408f3746  ./factcheck_prompt.md
 c16bb6c3266378460c635193a728086a629e0c9463d8477900f1365fd07f1da0  ./gate.py
 b172ebe12906d7f84182c11605cec312000d2847718cf93c40cc58a7e622fdba  ./head_check.py
-2e2e2eb2493ba4ab84ab958e7681d5b278a00ca35da3a6abe594a15d41d076ff  ./novel_words.py
+f26bc457b2badc5d47f31c6f53909f1a6be6026d7b6c2485261ceb01dcef84d9  ./novel_words.py
 e707095eb797499bba92ca2c7dfe4874f772ea6217bf9cb82b1c2af10cf5a23b  ./ov.py
 5649a99fbc751d22abcebfe3c920021bf9a7cf6e6f943491ecee59869402c6d3  ./rules/cta-benefits-metafield.md
 1da499cd8e7023e4e8e9682a3182206a2fd360ad64bb5203d9054d9f3b5c4c09  ./rules/dataforseo-credentials.md
@@ -1195,7 +1210,7 @@ c5cf7018f2be9b007a57e3cc41e4d4aeec35374717b28c0dc7738d8a298e32fb  ./rehost.py
 1b7441a5fb9b44069b651629173a6b4735d75e158771562c98ae4dd79ebd6d85  ./rules/fit-block-rule.md
 1d5a90d740c28cd881d617ce9b89a0a5b3efbc6d7e9525389c50ef433ddc5b7d  ./CTA-REVIEW-SPEC.md
 e15cebe0fde55247966cb6eab106660a3c0c44a0eb6db2f40151b6e9bde079d8  ./keyfeat_cover.py
-fd3b93350832d3aa137ecc957f13f430a97592210884ce524d0a0d63028d6095  ./unit_dual.py
+1dcfa78dfca197ac890f555ea29d4d441d526eb946356260772b604e1e4fe271  ./unit_dual.py
 e08c21d0b6fe0951e3c929318b2e2d7a757a4ed724d48bcc6369fb1fd047baff  ./para_feat.py
 87b17ae7b1e631dee6996441a52bfa46a66cc7961fe9f7a35777ebd18f1af356  ./extract_check.py
 e4c4050841aeea9b3b8180386f3bdc2eef070b8936c6a240d766bcd58bd08875  ./KF-REVIEW-SPEC.md
