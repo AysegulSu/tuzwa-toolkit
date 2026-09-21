@@ -14,7 +14,7 @@ b0757ad4fb2b1dd0ca20d03c64aeff9dc878467fe2397235c1f385fef76794bc  ./toolkit/cta_
 cde1242bc9ef0068eab3e0dc6eb3448da487a390c8ef85c75000c438408f3746  ./toolkit/factcheck_prompt.md
 c16bb6c3266378460c635193a728086a629e0c9463d8477900f1365fd07f1da0  ./toolkit/gate.py
 b172ebe12906d7f84182c11605cec312000d2847718cf93c40cc58a7e622fdba  ./toolkit/head_check.py
-2e2e2eb2493ba4ab84ab958e7681d5b278a00ca35da3a6abe594a15d41d076ff  ./toolkit/novel_words.py
+f26bc457b2badc5d47f31c6f53909f1a6be6026d7b6c2485261ceb01dcef84d9  ./toolkit/novel_words.py
 e707095eb797499bba92ca2c7dfe4874f772ea6217bf9cb82b1c2af10cf5a23b  ./toolkit/ov.py
 5649a99fbc751d22abcebfe3c920021bf9a7cf6e6f943491ecee59869402c6d3  ./rules/cta-benefits-metafield.md
 32deb43117fd7c95dfec66239e2138091b4ee0764957a263c1c90ded0e77dbea  ./rules/description-format-rule.md
@@ -41,7 +41,7 @@ c5cf7018f2be9b007a57e3cc41e4d4aeec35374717b28c0dc7738d8a298e32fb  ./toolkit/reho
 1b7441a5fb9b44069b651629173a6b4735d75e158771562c98ae4dd79ebd6d85  ./rules/fit-block-rule.md
 1d5a90d740c28cd881d617ce9b89a0a5b3efbc6d7e9525389c50ef433ddc5b7d  ./toolkit/CTA-REVIEW-SPEC.md
 e15cebe0fde55247966cb6eab106660a3c0c44a0eb6db2f40151b6e9bde079d8  ./toolkit/keyfeat_cover.py
-fd3b93350832d3aa137ecc957f13f430a97592210884ce524d0a0d63028d6095  ./toolkit/unit_dual.py
+1dcfa78dfca197ac890f555ea29d4d441d526eb946356260772b604e1e4fe271  ./toolkit/unit_dual.py
 e08c21d0b6fe0951e3c929318b2e2d7a757a4ed724d48bcc6369fb1fd047baff  ./toolkit/para_feat.py
 87b17ae7b1e631dee6996441a52bfa46a66cc7961fe9f7a35777ebd18f1af356  ./toolkit/extract_check.py
 e4c4050841aeea9b3b8180386f3bdc2eef070b8936c6a240d766bcd58bd08875  ./toolkit/KF-REVIEW-SPEC.md
