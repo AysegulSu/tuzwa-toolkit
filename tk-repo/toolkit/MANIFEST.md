@@ -1177,10 +1177,25 @@ productType / identity / a variant title was null (blr-batch40 and blr-batch44 r
 field is now `or ''`. Tested on all 50 blr-batch44 products: 50 lines, no crash. Both files and MANIFEST.sha256 were sent to
 the user for GitHub upload in the same turn.
 
+**Refresh note (2026-09-21 — two new lines: fix_sections.py, spec_parse.py; README step 3f):** `./fix_sections.py` and
+`./spec_parse.py` added at the user's decision, and `./README-toolkit.md` recomputed (new step 3f; both of its lines below
+updated). Both scripts were written in ddl2-batch28 as session code and uploaded to the GitHub repo by the user
+(`tk-repo/toolkit/`); their hashes are of those uploaded files, byte-identical to the copies the user attached.
+`./spec_parse.py` splits a supplier's run-on one-sentence spec table into `extract.specs` rows by a label lexicon (only
+products with EMPTY specs; unknown labels left alone; `[BLEED]` mark when a value still holds a colon).
+`./fix_sections.py` applies three sections.py reclassifications as code — "Why You'll Love It" → back into `key_features`,
+a spec-name pseudo-section → dropped, a two-clause comma headline over prose → dismissed as the lead — the misdetection
+families the DDL2-Batch1 and blr-batch32 run logs describe. Fixture-tested in this session (2 products): run-on line → 5
+correct rows incl. `Lamp Shade Material` and `Wall Light Type` (longest label wins); WYLI lines restored with bullet marks
+stripped, spec row and lead dismissed, a real `Care` section kept, junk heading removed from key_features; `--dry` writes
+nothing; second run changes nothing. NOT verified here: their behaviour on a live batch other than ddl2-batch28 — the
+`LABELS` lexicon comes from a lighting / home-decor supplier, so the first batch from another supplier reads the `--dry`
+output in full. `sections.py`, `gate.py` and every other script are unchanged; no rule or threshold changed.
+
 ```
 80f57a0214941faafc9fda7998ee3d5b3cbaa83e2d137fd7df19eb0a28d867c4  ./DESC-SPEC.md
 06007e07544be11e3be8b5194c17546c240543f24630b0da687d761c9447aeaa  ./EXTRACT-SPEC.md
-2d72e88736cd24c7a165bb94c3b2b0e5ac0e662bd1c0f41ab7fd49eac2c55cec  ./README-toolkit.md
+d6750b9414b575b0c708c9157d95e90332a5e7565b5110574bf3d352a872ffdf  ./README-toolkit.md
 a6f42ca0217bcbbaf74603ac81ee0e35192285c99bcb1f575dee0d89299fa57d  ./TITLE-SPEC.md
 6983acd8ac97c6b7221df3f2c8c2b7dd5f23e986f04808c0de5cda517b9e7c34  ./build_check.py
 18af4fa1108f5c83e8773ec4d1a27cf8fc2bdfa77ce14e11f979e44055cf15e7  ./cap.py
@@ -1232,7 +1247,9 @@ ca3d7b1753cfc850588e7f746886fb6bc161bf6c65f488553b017dc3d6be70b3  ./kf_review_in
 02b0d2e9de323b1167d42c637d13ff244a3e0833667087cbee2dbb3b1a0d80d9  ./usage_tips.py
 9537576f5d9b334a0f8c36afa5691f2aae93a343bc5dc005c33960c1422df545  ./sections.py
 3338fb4510aa32b831bddfd602f5acb3f1e469d341d55a6757f5ad20605a5399  ./kw_measure.py
-2d72e88736cd24c7a165bb94c3b2b0e5ac0e662bd1c0f41ab7fd49eac2c55cec  ./README-toolkit.md
+d6750b9414b575b0c708c9157d95e90332a5e7565b5110574bf3d352a872ffdf  ./README-toolkit.md
 ecf9731e745ef965f65733a7c7cf530046dc25bea32681c40c6bc05a87e67ea2  ./rules/kw-order-variant-rule.md
 7c86386a6f77ab101bd60957e78df39449751dce01cf61c7f0eb6da2ffad4d74  ./list_bold.py
+b3b64dd58e7faff215653dd17d1d7cd74d1ccd9e4ae76c2580c273a5273fbb51  ./fix_sections.py
+3b8daef9a896547894840edc1503d009e2f553fc9eebae2140f14ee1d01003f9  ./spec_parse.py
 ```

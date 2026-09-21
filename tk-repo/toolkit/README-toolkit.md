@@ -99,6 +99,26 @@ Drive folder keeps the old store's name; Worfa runs archive under `Worfa/<tag>/`
    outside that position; unit_dual.py converts inside these sections; fact_cover.py skips their lines. The run log carries
    `sections: N products with K sections, D dismissed (marketing M / policy P / lead L / long heading H), U unmapped named
    (pNN "…" → …)` — a log without this line means the step was skipped.
+   **3f. Two repair scripts for the extract (added 2026-09-21, user decision; written in ddl2-batch28; zero model tokens;
+   both take `--dry` — run `--dry` first and read every line, then run without it):**
+   (1) `python3 spec_parse.py` — run right after `extract_html.py`, BEFORE the extraction agents. Some suppliers write the
+   whole spec table as ONE run-on sentence in a single `<p>` ("Material: Metal Lamp Shade Material: Metal Dimensions: …"),
+   so extract_html.py finds no spec list and spec_cover.py has nothing to enforce (ddl2-batch28: 37 of 50; DDL2-Batch1: 13 of
+   50). The script splits that line into `extract.specs` rows at the colons whose preceding words are in its `LABELS`
+   lexicon (longest match first); a colon after words NOT in the lexicon is left alone, never guessed. Only products whose
+   `extract.specs` is EMPTY are touched; the source line stays in `facts`. A `[BLEED after …]` mark on a product's line means
+   a value still contains a colon — an unknown label was swallowed into it: add the label to `LABELS` (the lexicon is a
+   floor, not a ceiling — it was built from a lighting / home-decor supplier) and re-run, or fix the row by hand. The
+   extraction agents still complete `specs` by eye as before.
+   (2) `python3 fix_sections.py` — run right after `sections.py --extract` (3e), BEFORE the extraction agents. It applies
+   three of the reclassifications that 3e otherwise leaves to the main context, identically on every product: a "Why You'll
+   Love It" block is the source's Key Features list → its lines go back into `key_features` and the section is dropped
+   (also when sections.py had filed it under `sections_dismissed`); a pseudo-section whose heading is a spec name already in
+   `extract.specs` → dropped as a specification row; a two-clause comma headline over prose ("Refined Glow, Architectural
+   Design") → dismissed as the description's lead. Junk heading lines left in `key_features` are removed in the same pass.
+   It does NOT replace reading the `sections.py --extract` summary and the [UNMAPPED] list in full: a "What's in the Box?"
+   block and any other family are still sorted by hand. The run log carries both summary lines (`spec_parse: N products
+   filled, R spec rows…` and `fix_sections: WYLI blocks …`) — a log without them means the step was skipped.
 4. `python3 source_windows.py products.json > candidates/source_windows.txt` (script, zero model tokens; added 2026-09-06,
    user decision). Every contiguous 2–4-word window of every source title becomes a candidate — title-format-rule.md §1
    "the source title's own keywords are always measured", done exhaustively instead of by the extraction agent's judgment.
