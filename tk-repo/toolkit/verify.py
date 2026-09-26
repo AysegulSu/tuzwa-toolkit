@@ -41,6 +41,8 @@ Per product (each is one check; a check that cannot run is reported, never silen
                       (brief_flags.json {"q17_compare_table": true|false}, read via compare_build.q17()); the fit block check
                       (Q19) expects exactly one single-column "Right for you if" block directly before <h3>FAQs</h3> (2026-09-06)
   16 alt uniqueness   no duplicate alt inside the product (media alts + description img alts)
+  18 image layout     (2026-09-26, rules/description-image-layout-rule.md) no two description images back to back outside
+                      the `div.fewpe-img-grid`, and a live grid carries its <style> tag — uses spread.adjacent()
 Batch level: every final/dNN.json product present in live_after.json; no alt text repeated across the batch.
 
 Exit 1 on any failure. Output: one line per product + a summary line; failures name the check and show the two values.
@@ -56,6 +58,9 @@ DIM = json.load(open('dim/media.json')) if os.path.exists('dim/media.json') else
 try:
     from fit_build import q19; Q19 = q19()   # brief Q19: is the fit block expected live?
 except Exception: Q19 = False
+try:
+    from spread import adjacent as img_adjacent   # check 18 (2026-09-26): description image layout
+except Exception: img_adjacent = None
 
 ap = argparse.ArgumentParser()
 ap.add_argument('snapshot'); ap.add_argument('live'); ap.add_argument('collections', nargs='?')
@@ -194,6 +199,13 @@ for f in finals:
     alts = [m.get('alt') or '' for m in lmedia] + img_alts(L['descriptionHtml'])
     report(nn, 'alt unique in product', len(alts) == len(set(alts)), f'dups={[x for x in set(alts) if alts.count(x)>1][:3]}')
     for x in alts: batch_alts.setdefault(x, []).append(nn)
+    # 18 image layout (rules/description-image-layout-rule.md, 2026-09-26): no two images touch outside the grid; a live
+    # grid must carry its <style>. spread.py final ran in step 7, so final/dNN.json and live must both satisfy it.
+    if img_adjacent is None: print(f'  [note] {nn} image layout: spread.py not importable — NOT checked')
+    else:
+        lh = L['descriptionHtml'] or ''; nadj = img_adjacent(lh)
+        style_ok = ('fewpe-img-grid' not in lh) or ('<style>' in lh and '.fewpe-img-grid' in lh)
+        report(nn, 'image layout', nadj == 0 and style_ok, f'adjacent images outside grid={nadj}; grid style present={style_ok}')
     print(f'{nn} | {"ok" if not probs else "FAIL: " + ", ".join(probs)}')
     if probs: failed_products.append(nn)
 

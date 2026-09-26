@@ -1,6 +1,6 @@
 # toolkit MANIFEST — sha256 of every toolkit/rule doc as it should land on disk (refreshed 2026-09-07b, Tuzwa→Vepine store migration: 18 files re-hashed — CDN prefix, BRAND, comparison-table colours/heading and the tz-→vp- CSS hooks; desc-check.py re-hashed too — its line was already stale before the migration and the file was verified complete and compiling before rehashing)
 
-Last refresh: 2026-09-12 — STORE CHANGE Worfa → Tuzwa (20 lines: BRAND, CDN prefix, host, rule docs, credentials, brand-in-copy scan), after the same day's DDL2-Batch4 proxy backoff (shopify_api.py, kw_measure.py) and DDL2-Batch3 unit_dual.py fix (engine litres, dual temperature ranges), on top of 2026-09-11's list_bold.py added as a 57th line (bold Key Features / Specifications lead-ins, gap under image 2; gate.py, struct-check.py, rules/description-format-rule.md recomputed), after the same day's US units only in the budgeted elements (6 lines recomputed: unit_dual.py, compare_build.py, fit_build.py, rules/comparison-table-rule.md, rules/fit-block-rule.md, rules/description-format-rule.md), on top of the same day's kw_measure.py word-order guard (3 lines recomputed, a 56th line added: rules/kw-order-variant-rule.md),
+Last refresh: 2026-09-26 — description image layout rule (2 new lines: spread.py, rules/description-image-layout-rule.md; verify.py check 18 and README-toolkit.md steps 7–8 recomputed), on top of 2026-09-12 — STORE CHANGE Worfa → Tuzwa (20 lines: BRAND, CDN prefix, host, rule docs, credentials, brand-in-copy scan), after the same day's DDL2-Batch4 proxy backoff (shopify_api.py, kw_measure.py) and DDL2-Batch3 unit_dual.py fix (engine litres, dual temperature ranges), on top of 2026-09-11's list_bold.py added as a 57th line (bold Key Features / Specifications lead-ins, gap under image 2; gate.py, struct-check.py, rules/description-format-rule.md recomputed), after the same day's US units only in the budgeted elements (6 lines recomputed: unit_dual.py, compare_build.py, fit_build.py, rules/comparison-table-rule.md, rules/fit-block-rule.md, rules/description-format-rule.md), on top of the same day's kw_measure.py word-order guard (3 lines recomputed, a 56th line added: rules/kw-order-variant-rule.md),
 on top of the 2026-09-10 Worfa go-live checks (7 lines: theme colours, store row, verified credentials),
 after the same day's store change Vepine → Worfa (17 lines: BRAND, CDN prefix, host, rule docs, credentials),
 on top of the same day's comparison-table mobile/desktop width fix and the rotated Shopify credential pair.
@@ -1192,10 +1192,12 @@ nothing; second run changes nothing. NOT verified here: their behaviour on a liv
 `LABELS` lexicon comes from a lighting / home-decor supplier, so the first batch from another supplier reads the `--dry`
 output in full. `sections.py`, `gate.py` and every other script are unchanged; no rule or threshold changed.
 
+**Refresh note (2026-09-26 — description image layout, RULE CHANGE at the user's decision):** two new lines — `./spread.py` (moves adjacent description images one per section break, leftovers into one 2-column `div.fewpe-img-grid`; count, order, src and attributes never change) and `./rules/description-image-layout-rule.md` (the rule text). `./verify.py` recomputed for check 18 "image layout" (18 checks per product) and `./README-toolkit.md` recomputed for step 7 (`python3 spread.py final` after dim_keep, before the payloads) and step 8 (check 18). Brought over from the user's other copy of this project (handover-image-layout-2026-09-26.zip); the whole-store sweep recorded there was on the Worfa store — the Tuzwa store was NOT swept in this session.
+
 ```
 80f57a0214941faafc9fda7998ee3d5b3cbaa83e2d137fd7df19eb0a28d867c4  ./DESC-SPEC.md
 06007e07544be11e3be8b5194c17546c240543f24630b0da687d761c9447aeaa  ./EXTRACT-SPEC.md
-d6750b9414b575b0c708c9157d95e90332a5e7565b5110574bf3d352a872ffdf  ./README-toolkit.md
+e568b2514af548cc774bd29ad7328989050640a4df3f93822955444fb3ebbe99  ./README-toolkit.md
 a6f42ca0217bcbbaf74603ac81ee0e35192285c99bcb1f575dee0d89299fa57d  ./TITLE-SPEC.md
 6983acd8ac97c6b7221df3f2c8c2b7dd5f23e986f04808c0de5cda517b9e7c34  ./build_check.py
 18af4fa1108f5c83e8773ec4d1a27cf8fc2bdfa77ce14e11f979e44055cf15e7  ./cap.py
@@ -1226,7 +1228,7 @@ a23240ba5083350b4e5583c975d9ef018177467fe55788d720bae66f6a5e7129  ./struct-check
 98908696a60cf09023072e92218f43985a995b88c323f67433e9bfcc250d1068  ./title-check.py
 f29bf7b35e9abf4ee77519cb0d83a3bc41f8c53d8d6be897579c0cc32a50c3e1  ./usage-efficiency-runbook.md
 420431d7b50507a524c1140eb0bcdd7ad6e04c6290246d99a0b5dd767db12205  ./value_check.py
-713e4becb5cb847ab4447e388614f2ddfdc0d34f7e15d684b02ae6f02d9abfa3  ./verify.py
+10da112a8c87d0a5c7e73f073445302f704b02a3e9533a95a3f9e51512b02ff4  ./verify.py
 c5cf7018f2be9b007a57e3cc41e4d4aeec35374717b28c0dc7738d8a298e32fb  ./rehost.py
 5c4da57651a772232d32a7557a01c001c96302f90d87aa1c795ae9581c40ddda  ./compare_build.py
 f7a5d4b74973e5ce54e4d44eb95477841b18f31f6c9881d4d03df922ffe199e3  ./rules/comparison-table-rule.md
@@ -1247,9 +1249,11 @@ ca3d7b1753cfc850588e7f746886fb6bc161bf6c65f488553b017dc3d6be70b3  ./kf_review_in
 02b0d2e9de323b1167d42c637d13ff244a3e0833667087cbee2dbb3b1a0d80d9  ./usage_tips.py
 9537576f5d9b334a0f8c36afa5691f2aae93a343bc5dc005c33960c1422df545  ./sections.py
 3338fb4510aa32b831bddfd602f5acb3f1e469d341d55a6757f5ad20605a5399  ./kw_measure.py
-d6750b9414b575b0c708c9157d95e90332a5e7565b5110574bf3d352a872ffdf  ./README-toolkit.md
+e568b2514af548cc774bd29ad7328989050640a4df3f93822955444fb3ebbe99  ./README-toolkit.md
 ecf9731e745ef965f65733a7c7cf530046dc25bea32681c40c6bc05a87e67ea2  ./rules/kw-order-variant-rule.md
 7c86386a6f77ab101bd60957e78df39449751dce01cf61c7f0eb6da2ffad4d74  ./list_bold.py
 b3b64dd58e7faff215653dd17d1d7cd74d1ccd9e4ae76c2580c273a5273fbb51  ./fix_sections.py
 3b8daef9a896547894840edc1503d009e2f553fc9eebae2140f14ee1d01003f9  ./spec_parse.py
+e1a23bcabc124e327d07c0d3d6441e416c0dbdba53cf08d2b93600e36a6a4957  ./spread.py
+55e1c514315857a0b72eed43a09e2b42233996e2d2aeb4892cb3d439f4e066bf  ./rules/description-image-layout-rule.md
 ```

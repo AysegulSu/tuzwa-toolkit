@@ -234,6 +234,12 @@ Drive folder keeps the old store's name; Worfa runs archive under `Worfa/<tag>/`
    metafieldsSet ×2, fileUpdate alt batches; backup-alt-<tag>.md to /mnt/user-data/outputs/ and sent to the chat BEFORE the
    alt push (NOT a project doc since 2026-09-08 — see "Where run artefacts go"); then
    `for f in push/mut*.json push/cta*.json push/alt*.json; do python3 shopify_api.py mutate $f; done`.
+   **Image layout (added 2026-09-26, rules/description-image-layout-rule.md, user decision):** after dim_keep and BEFORE the
+   payloads run `python3 spread.py final` (zero model tokens) — it rewrites final/dNN.json so no two description images sit
+   back to back: extras go one per section break (never next to another image, never before the FAQs), leftovers into one
+   `div.fewpe-img-grid` (2 columns, 1 on mobile); image count, order, src and attributes are unchanged, the script refuses a
+   file whose image list would change. Its `spread: N changed (G with grid), M untouched` line goes into the run log.
+   verify.py check 18 confirms it live. Whole-store sweeps use `python3 spread.py store --status active [--apply]`.
    **`seo` is replaced whole, never merged (added 2026-09-05, opener-fix run):** `ProductUpdateInput.seo` overwrites the
    entire SEO object — sending `seo: { title }` alone set `seo.description` to null on 42 products. Every payload that
    touches SEO must carry BOTH `seo.title` and `seo.description`; when only one half is being rewritten, copy the other
@@ -267,9 +273,10 @@ Drive folder keeps the old store's name; Worfa runs archive under `Worfa/<tag>/`
    final/dNN.json and the pre-push snapshot: title, normalized descriptionHtml, seo (+ 70/160 limits), productType, tags =
    snapshot ∪ season (nothing dropped, no duplicate), status unchanged (pass `--status ACTIVE` only when the brief changed
    it), category (KEEP or proposal), CTA metafield JSON, collections joined, media alts (≤125, unique in product and across
-   the batch), media order, description img src order + all on our CDN, variant prices vs snapshot, brand name absent
+   the batch), media order, description img src order + all on our CDN, image layout (no two images back to back, grid style
+   present — check 18, 2026-09-26), variant prices vs snapshot, brand name absent
    (outside the comparison block), comparison block live exactly once when Q17 = Add table / none when No table, fit block likewise for Q19 (one column, directly before the FAQs), and for
-   Q18 products the media order = snapshot + the dimension image at position 3 (the position recorded in dim/media.json) with its alt — 17
+   Q18 products the media order = snapshot + the dimension image at position 3 (the position recorded in dim/media.json) with its alt — 18
    checks per product + 1 batch check, exit 1 on any failure; the run log also carries the coverage.md table from
    extract_check.py (2026-09-07); a check it cannot run is printed as a [note], never skipped
    silently. Then `python3 head_check.py live_after.json` → 0 FAIL (verify.py does not replace it). Run log to project — quote
